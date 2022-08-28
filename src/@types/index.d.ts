@@ -13,13 +13,19 @@ type TransitionAnimation = (props: TransitionAnimation) => JSX.Element;
 interface AnimatedComponent {
   name: string;
   component: (data: any) => JSX.Element;
+  Animation?: (props: {
+    children: React.ReactNode;
+    willUnmount?: boolean;
+    duration?: number;
+    style?: AnimatedStyles;
+  }) => JSX.Element;
 }
 
 interface TransitionComponentsProps {
   components: AnimatedComponent[];
   activeComponentName: string;
   duration?: number;
-  Animation: (props: {
+  Animation?: (props: {
     children: React.ReactNode;
     willUnmount?: boolean;
     duration?: number;

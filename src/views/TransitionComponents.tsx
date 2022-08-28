@@ -1,12 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
+import { DebugLogger } from '@utils/logger';
+import FadeInOut from './animations/FadeInOut';
+
+const log = DebugLogger('TransitionComponents.tsx');
 
 const defaultDuration = 500;
 
 export default function TransitionComponents({
   activeComponentName,
   components,
-  Animation,
+  Animation = FadeInOut,
   duration = defaultDuration,
 }: TransitionComponentsProps) {
   const [compCurrName, setCompCurrName] = useState(activeComponentName);
@@ -16,13 +20,15 @@ export default function TransitionComponents({
 
   const RenderComponent = useCallback(
     ({ willUnmount }: RenderComponentProps) => {
-      const SelectedComponent = components.filter(
+      const component = components.filter(
         comp => comp.name === compCurrName,
-      )[0]?.component;
+      )[0];
+      const ComponentAnimation = component?.Animation || Animation;
+      const SelectedComponent = component?.component;
       return SelectedComponent ? (
-        <Animation willUnmount={willUnmount} duration={duration / 2}>
+        <ComponentAnimation willUnmount={willUnmount} duration={duration / 2}>
           <SelectedComponent />
-        </Animation>
+        </ComponentAnimation>
       ) : (
         <View />
       );
@@ -30,5 +36,6 @@ export default function TransitionComponents({
     [compCurrName],
   );
 
+  log([RenderComponent]);
   return <RenderComponent willUnmount={activeComponentName !== compCurrName} />;
 }

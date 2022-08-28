@@ -7,9 +7,12 @@ const log = DebugLogger('SlideInOut.tsx');
 
 const { SCREEN_HEIGHT, SCREEN_WIDTH } = Layout;
 
-export default function SlideInOut(
-  direction?: 'up' | 'down' | 'left' | 'right',
-) {
+export default function SlideInOut(props?: {
+  direction?: 'up' | 'down' | 'left' | 'right';
+  reverseOut?: boolean;
+}) {
+  let direction = props?.direction || 'left';
+  let reverseOut = props?.reverseOut;
   return function ({
     children,
     willUnmount,
@@ -29,7 +32,6 @@ export default function SlideInOut(
       | null
       | undefined;
   }) {
-    if (!direction) direction = 'left';
     const isLeft = direction === 'left';
     const isRight = direction === 'right';
     const isDown = direction === 'down';
@@ -56,7 +58,7 @@ export default function SlideInOut(
       useNativeDriver: true,
       easing: Easing.out(Easing.sin),
       duration: duration || 300,
-      toValue: offScreen,
+      toValue: reverseOut ? offScreen : -offScreen,
     });
 
     useEffect(() => {
